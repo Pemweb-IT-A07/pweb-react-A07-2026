@@ -1,121 +1,89 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useCallback } from 'react'
+import { useLocalStorage } from './hooks/useLocalStorage'
+import type { Application, NewApplicationInput } from './types'
+import { createApplication } from './utils'
 import './App.css'
 
+const DEFAULT_SKILLS = ['React', 'TypeScript', 'CSS']
+
 function App() {
-  const [count, setCount] = useState(0)
+  // State utama, persisten di localStorage
+  const [applications, setApplications] = useLocalStorage<Application[]>('amm:applications', [])
+  const [kaptenSkills] = useLocalStorage<string[]>('amm:kaptenSkills', DEFAULT_SKILLS)
 
+  /** Tambah lamaran baru (id, timestamp, log pertama dibuat otomatis). */
+  const addApplication = useCallback(
+    (input: NewApplicationInput): Application => {
+      const created = createApplication(input)
+      setApplications((prev) => [created, ...prev])
+      return created
+    },
+    [setApplications],
+  )
+
+  /**
+   * Update 1 lamaran secara immutable lewat fungsi updater.
+   * Updater wajib return objek baru (spread), bukan mutasi `app`.
+   */
+  const updateApplication = useCallback(
+    (id: string, updater: (app: Application) => Application) => {
+      setApplications((prev) => prev.map((app) => (app.id === id ? updater(app) : app)))
+    },
+    [setApplications],
+  )
+
+  /** Hapus lamaran; return data yang dihapus (untuk Undo). */
+  const deleteApplication = useCallback(
+    (id: string): Application | undefined => {
+      const removed = applications.find((app) => app.id === id)
+      setApplications((prev) => prev.filter((app) => app.id !== id))
+      return removed
+    },
+    [applications, setApplications],
+  )
+
+  // --- Placeholder sementara: diganti layout/tab dari task [T0] layout ---
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main className="skeleton">
+      <h1>Aku Mw Magang</h1>
+      <p>
+        Skill Kapten: {kaptenSkills.join(', ')} · Total lamaran: {applications.length}
+      </p>
 
-      <div className="ticks"></div>
+      <button
+        type="button"
+        onClick={() =>
+          addApplication({
+            company: `Contoh Corp ${applications.length + 1}`,
+            role: 'Frontend Intern',
+            workMode: 'Hybrid',
+            status: 'WISHLIST',
+            requiredSkills: ['React', 'TypeScript', 'Docker'],
+          })
+        }
+      >
+        + Tambah contoh
+      </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <ul>
+        {applications.map((app) => (
+          <li key={app.id}>
+            <strong>{app.company}</strong> — {app.role} [{app.status}] · log: {app.activityLogs.length}
+            <button
+              type="button"
+              onClick={() =>
+                updateApplication(app.id, (a) => ({ ...a, lastUpdatedAt: new Date().toISOString() }))
+              }
+            >
+              Sentuh
+            </button>
+            <button type="button" onClick={() => deleteApplication(app.id)}>
+              Hapus
+            </button>
+          </li>
+        ))}
+      </ul>
+    </main>
   )
 }
 
