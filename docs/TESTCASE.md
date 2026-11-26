@@ -1,8 +1,8 @@
 # Laporan Uji Testcase — Aku Mw Magang
 
-- **Tanggal uji:** 26 November 2026
+- **Tanggal uji:** 26 November 2026 (uji ulang setelah UI/UX Updates)
 - **Lingkungan:** Chrome (desktop), `npm run dev` (Vite), localStorage dikosongkan sebelum uji
-- **Commit yang diuji:** `main` setelah PR #29, ditambah perbaikan kecil di PR ini
+- **Commit yang diuji:** `main` setelah PR #40 (UI/UX Updates #35, tombol atur jadwal bentrok #38 & #40)
 - **Pembagian:** Wawa (TC 1, 2, 3, 9), Alin (TC 4, 8, 10 Comparator), Hendra (TC 5, 6, 7, 10 Undo)
 
 ## Ringkasan
@@ -28,11 +28,11 @@ Tambahan: `npx tsc --noEmit`, `npm run build`, dan `npm run lint` lolos; tidak a
 
 **Langkah**
 1. Buka tab Eksplorasi → muncul Loading lalu daftar lowongan dari Remotive API (16 lowongan).
-2. Putus koneksi ke API (Offline), klik **↻ Muat Ulang**.
-3. Klik **Pakai Fallback Lokal**.
+2. Putus koneksi ke API (Offline), klik **Muat ulang** di kanan atas daftar.
+3. Klik **Pakai fallback lokal**.
 
 **Hasil**
-- Loading tampil, lalu muncul state Error: *"Tidak bisa terhubung ke server. Periksa koneksi internet kamu."* dengan tombol **Coba Lagi** dan **Pakai Fallback Lokal**.
+- Loading tampil, lalu muncul state Error: *"Gagal memuat lowongan — Tidak bisa terhubung ke server. Periksa koneksi internet kamu."* dengan tombol **Coba lagi** dan **Pakai fallback lokal**.
 - Fallback memuat 15 lowongan dari `magang-fallback.json`.
 
 > Catatan: offline disimulasikan dengan membuat request ke `remotive.com` gagal (`TypeError: Failed to fetch`), sama seperti saat jaringan putus. Mode *Offline* DevTools juga memblokir request ke dev server lokal, jadi fallback paling baik dicoba setelah koneksi kembali atau saat hanya API eksternal yang gagal.
@@ -45,7 +45,7 @@ Tambahan: `npx tsc --noEmit`, `npm run build`, dan `npm run lint` lolos; tidak a
 
 **Langkah:** Tambah skill **Docker** di Profil Skill Kapten.
 
-**Hasil:** Match lowongan yang meminta Docker langsung naik tanpa reload:
+**Hasil:** Angka match lowongan yang meminta Docker langsung naik tanpa reload, dan chip Docker di kartu berubah jadi bercentang:
 
 | Lowongan | Sebelum | Sesudah |
 |---|---|---|
@@ -54,23 +54,21 @@ Tambahan: `npx tsc --noEmit`, `npm run build`, dan `npm run lint` lolos; tidak a
 | Machine Learning Intern | 0% | 25% |
 | Golang Backend Intern | 0% | 25% |
 
-Menambah `DOCKER` lagi ditolak: *Skill "DOCKER" sudah ada*.
-
 ![](testcase/tc2-skill-docker.jpg)
 
 ## TC 3 — Debounce Search
 
-**Langkah:** Ketik cepat `golang` (6 ketukan dalam ±12 ms) di kolom pencarian.
+**Langkah:** Ketik cepat `golang` (6 ketukan dalam ±21 ms) di kolom **Cari lowongan** (bisa juga tekan `/` untuk fokus ke kolom ini).
 
-**Hasil:** Daftar hanya berubah **1 kali**, **±404 ms** setelah ketukan terakhir (15 → 1 lowongan). Selama jeda muncul indikator "mencari…".
+**Hasil:** Daftar hanya berubah **1 kali**, **±406 ms** setelah ketukan terakhir (15 → 1 lowongan). Selama jeda muncul indikator "mencari…".
 
 ![](testcase/tc3-debounce-search.jpg)
 
 ## TC 4 — Anti-Duplikat & Focus
 
 **Langkah**
-1. Simpan lowongan *Frontend Intern — Nusantara Cloud* ke Wishlist.
-2. Di Form Manual isi `nusantara cloud` / `frontend intern` (huruf kecil), kursor di field Required Skills, lalu klik Tambah Lamaran.
+1. Simpan lowongan *Frontend Intern — Nusantara Cloud* lewat **Simpan ke Wishlist**.
+2. Buka tab Pipeline, klik **Tambah lamaran** (form dilipat secara default), isi `nusantara cloud` / `frontend intern` (huruf kecil), kursor di field Required Skills, lalu klik **Tambah Lamaran**.
 
 **Hasil**
 - Tombol berubah jadi **Sudah Dilamar** (disabled).
@@ -82,22 +80,22 @@ Menambah `DOCKER` lagi ditolak: *Skill "DOCKER" sudah ada*.
 
 ## TC 5 — State Machine
 
-**Langkah:** Pada *Nusantara Cloud* (WISHLIST): pindah ke APPLIED → SCREENING → INTERVIEW.
+**Langkah:** Pada *Nusantara Cloud* (WISHLIST): **Detail** → tab *Info & Status* → pindah ke APPLIED → SCREENING → INTERVIEW.
 
 **Hasil**
 - Dari WISHLIST, opsi tujuan hanya **Applied**; OFFER tidak tersedia (tidak bisa dipilih).
 - APPLIED tanpa data ditolak: *Versi CV wajib diisi*, *Tanggal melamar wajib diisi*. Setelah diisi (`CV-v2-frontend`, `2026-11-20`) berhasil.
 - INTERVIEW tanpa jadwal ditolak: *Jadwal interview wajib diisi*. Setelah diisi `2026-12-01T10:00` berhasil.
 - Dari INTERVIEW opsi berikutnya: Offer, Rejected, Ghosted.
-- Activity log mencatat setiap perpindahan status.
+- Activity log mencatat setiap perpindahan status (terbaru di atas).
 
 ![](testcase/tc5-state-machine-log.jpg)
 
 ## TC 6 — Simulasi Ghosting
 
-**Langkah:** Tambah *Arunika Data — Data Engineer Intern* (APPLIED), klik **Simulasi +15 Hari**.
+**Langkah:** Tambah *Arunika Data — Data Engineer Intern* (APPLIED) lewat form, klik **Simulasi +15 Hari** di kartunya.
 
-**Hasil:** Badge **Rawan Ghosting** muncul, kartu statistik Rawan Ghosting naik **0 → 1**, dan toggle *Hanya Rawan Ghosting* hanya menampilkan Arunika Data.
+**Hasil:** Badge **Rawan Ghosting** muncul di kartu, kartu statistik Rawan Ghosting naik **0 → 1**, dan toggle *Hanya Rawan Ghosting* hanya menampilkan Arunika Data.
 
 | Statistik | Badge |
 |---|---|
@@ -107,9 +105,18 @@ Menambah `DOCKER` lagi ditolak: *Skill "DOCKER" sudah ada*.
 
 **Langkah:** Pindahkan Arunika Data ke INTERVIEW `2026-12-01T10:30` (Nusantara Cloud `10:00`), lalu set filter status **Wishlist**.
 
-**Hasil:** Banner *"Jadwal interview bentrok (1) — Arunika Data (10.30) dan Nusantara Cloud (10.00) hanya berselisih 30 menit"* tampil, dan **tetap tampil** saat filter Wishlist aktif (0 kartu tampil).
+**Hasil:** Banner *"Jadwal interview bentrok — Nusantara Cloud (10.00) dan Arunika Data (10.30), selisih 30 menit"* tampil, dan **tetap tampil** saat filter Wishlist aktif (0 kartu tampil).
 
-![](testcase/tc7-banner-bentrok-filter.jpg)
+![](testcase/tc7-1-banner-bentrok-filter.png)
+
+**Tambahan — tombol Atur jadwal:** di samping banner ada tombol **Atur jadwal** yang membuka dialog berisi semua lamaran yang bentrok. Diuji dengan 3 interview (10.00, 10.30, 10.45, jadi 3 pasangan bentrok):
+- Setiap baris menampilkan "Bentrok dengan X (N menit)" dan ringkasan *Masih ada 3 bentrok*.
+- Ojekin diubah ke 13.00 → sisa 1 bentrok; Arunika Data diubah ke 15.00 → *Tidak ada jadwal bentrok*.
+- **Simpan 2 jadwal** → banner hilang, dan activity log tiap lamaran mencatat *"Jadwal interview diubah: … → …"*.
+
+| Dialog dibuka | Setelah jadwal diubah |
+|---|---|
+| ![](testcase/tc7-2-dialog-atur-jadwal.jpg) | ![](testcase/tc7-3-dialog-tanpa-bentrok.jpg) |
 
 ## TC 8 — Checklist & Refresh
 
@@ -123,17 +130,17 @@ Menambah `DOCKER` lagi ditolak: *Skill "DOCKER" sudah ada*.
 
 ## TC 9 — Timer Cleanup
 
-**Langkah:** Start Prep Timer (±3 detik → 01:57), tutup modal, tunggu 1,5 detik, buka lagi lalu Start.
+**Langkah:** Tab *Latihan Interview* → **Start** (±3 detik → 01:57), tutup modal, tunggu 1,5 detik, buka lagi lalu **Start**.
 
-**Hasil:** Saat dibuka ulang timer kembali 02:00. Dalam 5 detik timer turun tepat **5 detik** (02:00 → 01:55), tidak 2x cepat. Pause menghentikan hitungan. Tidak ada error console.
+**Hasil:** Saat dibuka ulang timer kembali 02:00. Dalam 5 detik timer turun tepat **5 detik** (02:00 → 01:55), tidak 2x cepat. **Pause** menghentikan hitungan. Tidak ada error console.
 
 ![](testcase/tc9-timer-dibuka-ulang.jpg)
 
 ## TC 10 — Undo & Comparator
 
 **Undo**
-- Hapus Nusantara Cloud → toast *"Lamaran Nusantara Cloud dihapus — UNDO"*. Klik Undo < 5 detik → data kembali **identik** (2 checklist, 4 activity log, posisi semula), banner bentrok muncul lagi.
-- Hapus 2x berturut-turut (Temp Corp A, 3 detik kemudian Temp Corp B): toast masih tampil di detik ke-5,9 (timer lama sudah di-`clearTimeout`) dan baru hilang ±5 detik setelah hapus kedua.
+- Hapus Nusantara Cloud (ikon tempat sampah) → toast *"Lamaran Nusantara Cloud dihapus — Undo"*. Klik **Undo** < 5 detik → data kembali **identik** (2 checklist, 4 activity log, posisi semula), banner bentrok muncul lagi.
+- Hapus 2x berturut-turut (Temp Corp A, 3 detik kemudian Temp Corp B): toast masih tampil di detik ke-5,8 (timer lama sudah di-`clearTimeout`) dan baru hilang ±5 detik setelah hapus kedua.
 
 **Comparator**
 - Sebelum ada offer: pesan *"Butuh minimal 2 lamaran berstatus Offer…"*.
@@ -156,7 +163,8 @@ Hasil aplikasi sama dengan hitungan manual.
 
 ---
 
-## Perbaikan yang ditemukan saat uji
+## Riwayat perbaikan dari hasil uji
 
-1. **TC 1:** setelah lowongan berhasil dimuat tidak ada tombol untuk fetch ulang, padahal skenario meminta Offline lalu *Retry*. Ditambahkan tombol **↻ Muat Ulang** di atas daftar lowongan.
-2. Sub-tab modal Detail Lamaran memunculkan scrollbar vertikal kecil; diperbaiki dengan `overflow-y: hidden`.
+1. **TC 1 (PR #31):** setelah lowongan berhasil dimuat tidak ada tombol untuk fetch ulang, padahal skenario meminta Offline lalu *Retry*. Ditambahkan tombol **Muat ulang** di atas daftar lowongan.
+2. **PR #31:** sub-tab modal Detail Lamaran memunculkan scrollbar vertikal kecil; diperbaiki dengan `overflow-y: hidden`.
+3. **TC 7 (PR #38, #40):** banner bentrok sebelumnya hanya memberi tahu tanpa jalan keluar, dan lamaran INTERVIEW tidak bisa ganti jadwal. Ditambahkan tombol **Atur jadwal** di banner (dialog ubah semua jadwal yang bentrok sekaligus) dan editor jadwal di detail lamaran.
