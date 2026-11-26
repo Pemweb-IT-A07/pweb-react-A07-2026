@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Application } from '../types'
 import { Modal } from './Modal'
 import { StatusBadge } from './StatusBadge'
+import { formatDateTime, formatRupiah } from '../utils'
 
 type DetailTab = 'info' | 'checklist' | 'log' | 'prep'
 
@@ -15,14 +16,6 @@ const DETAIL_TABS: { key: DetailTab; label: string }[] = [
 interface ApplicationDetailModalProps {
   application: Application
   onClose: () => void
-}
-
-function formatDateTime(value?: string): string {
-  if (!value) return '-'
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? value
-    : date.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })
 }
 
 /** Modal Detail Lamaran. Isi tiap tab diisi oleh fitur 4 (status, checklist, log) & 5 (timer). */
@@ -71,7 +64,7 @@ export function ApplicationDetailModal({ application, onClose }: ApplicationDeta
           <dd>{formatDateTime(application.interviewDateTime)}</dd>
           <dt>Offer</dt>
           <dd>
-            {application.salaryOffer ? `Rp ${application.salaryOffer.toLocaleString('id-ID')}` : '-'}
+            {formatRupiah(application.salaryOffer)}
           </dd>
           <dt>Terakhir Update</dt>
           <dd>{formatDateTime(application.lastUpdatedAt)}</dd>
