@@ -443,6 +443,8 @@ textarea {
   gap: 0.25rem;
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
 }
 .subtab {
   border: 0;
@@ -1020,4 +1022,10 @@ textarea {
 /* ---------- Bonus: theme toggle ---------- */
 .theme-toggle {
   margin-left: 0.5rem;
+}
+.explorer__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
