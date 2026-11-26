@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import type { Application, JobListing, NewApplicationInput } from './types'
 import { inferWorkMode } from './services/jobService'
@@ -11,8 +11,16 @@ import { JobExplorer } from './components/JobExplorer'
 import { ApplicationForm } from './components/ApplicationForm'
 import { PipelineView } from './components/PipelineView'
 import { ConflictBanner } from './components/ConflictBanner'
+import { Toast } from './components/Toast'
 
 const DEFAULT_SKILLS = ['React', 'TypeScript', 'CSS']
+const UNDO_DURATION_MS = 5000
+
+/** Lamaran yang baru dihapus + posisinya, untuk dikembalikan utuh saat Undo. */
+interface DeletedEntry {
+  application: Application
+  index: number
+}
 
 function App() {
   // State utama, persisten di localStorage
@@ -46,7 +54,6 @@ function App() {
     [setApplications],
   )
 
-  /** Hapus lamaran; return data yang dihapus (untuk Undo). */
   /** Simpan lowongan ke daftar lamaran sebagai WISHLIST (`tags` -> requiredSkills). */
   const saveJobToWishlist = useCallback(
     (job: JobListing) => {
@@ -77,14 +84,56 @@ function App() {
   // Derived: bentrok dicek dari SELURUH lamaran, tidak terpengaruh filter
   const conflicts = useMemo(() => findInterviewConflicts(applications), [applications])
 
+  // ---------- Undo Delete (5 detik) ----------
+  const [lastDeleted, setLastDeleted] = useState<DeletedEntry | null>(null)
+  /** ID setTimeout disimpan di useRef: tidak memicu render & bisa di-clear kapan saja. */
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearUndoTimer = useCallback(() => {
+    if (undoTimerRef.current !== null) {
+      clearTimeout(undoTimerRef.current)
+      undoTimerRef.current = null
+    }
+  }, [])
+
+  // Bersihkan timer jika App unmount
+  useEffect(() => clearUndoTimer, [clearUndoTimer])
+
+  /** Hapus lamaran + tampilkan toast Undo selama 5 detik. */
   const deleteApplication = useCallback(
-    (id: string): Application | undefined => {
-      const removed = applications.find((app) => app.id === id)
+    (id: string) => {
+      const index = applications.findIndex((app) => app.id === id)
+      if (index === -1) return
+
+      // Hapus 2x berturut-turut < 5 detik -> timer lama dibersihkan dulu
+      clearUndoTimer()
       setApplications((prev) => prev.filter((app) => app.id !== id))
-      return removed
+      setLastDeleted({ application: applications[index], index })
+      undoTimerRef.current = setTimeout(() => {
+        setLastDeleted(null)
+        undoTimerRef.current = null
+      }, UNDO_DURATION_MS)
     },
-    [applications, setApplications],
+    [applications, setApplications, clearUndoTimer],
   )
+
+  /** Kembalikan lamaran terakhir yang dihapus (lengkap dengan checklist & log) ke posisi semula. */
+  const undoDelete = useCallback(() => {
+    if (!lastDeleted) return
+    clearUndoTimer()
+    const { application, index } = lastDeleted
+    setApplications((prev) =>
+      prev.some((app) => app.id === application.id)
+        ? prev
+        : [...prev.slice(0, index), application, ...prev.slice(index)],
+    )
+    setLastDeleted(null)
+  }, [lastDeleted, setApplications, clearUndoTimer])
+
+  const dismissToast = useCallback(() => {
+    clearUndoTimer()
+    setLastDeleted(null)
+  }, [clearUndoTimer])
 
   return (
     <>
@@ -131,6 +180,18 @@ function App() {
           application={selectedApp}
           onClose={closeDetail}
           onUpdate={(updater) => updateApplication(selectedApp.id, updater)}
+        />
+      )}
+
+      {lastDeleted && (
+        <Toast
+          // key baru tiap penghapusan -> progress bar mulai ulang dari penuh
+          key={lastDeleted.application.id}
+          message={`Lamaran ${lastDeleted.application.company} dihapus`}
+          actionLabel="Undo"
+          onAction={undoDelete}
+          onClose={dismissToast}
+          duration={UNDO_DURATION_MS}
         />
       )}
     </>
