@@ -35,6 +35,38 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Bonus: dark mode (data-theme dipasang oleh useTheme) */
+:root[data-theme='dark'] {
+  --bg: #111418;
+  --surface: #1a1e24;
+  --surface-2: #232830;
+  --text: #e6e9ee;
+  --text-muted: #9aa5b1;
+  --border: #323944;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-soft: rgba(45, 212, 191, 0.15);
+  --on-accent: #0b1f1d;
+
+  --green: #4ade80;
+  --green-soft: rgba(74, 222, 128, 0.14);
+  --yellow: #facc15;
+  --yellow-soft: rgba(250, 204, 21, 0.14);
+  --red: #f87171;
+  --red-soft: rgba(248, 113, 113, 0.14);
+  --blue: #60a5fa;
+  --blue-soft: rgba(96, 165, 250, 0.15);
+  --gray-soft: #2b313a;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}
+:root[data-theme='dark'] .status--screening {
+  background: rgba(167, 139, 250, 0.16);
+  color: #c4b5fd;
+}
+
 *,
 *::before,
 *::after {
@@ -983,4 +1015,9 @@ textarea {
 }
 .comparator__note {
   font-size: 0.82rem;
+}
+
+/* ---------- Bonus: theme toggle ---------- */
+.theme-toggle {
+  margin-left: 0.5rem;
 }
