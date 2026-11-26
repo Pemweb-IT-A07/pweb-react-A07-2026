@@ -7,6 +7,7 @@ import { StatusTransitionPanel } from './StatusTransitionPanel'
 import { ChecklistPanel } from './ChecklistPanel'
 import { ActivityLogPanel } from './ActivityLogPanel'
 import { InterviewPrepTimer } from './InterviewPrepTimer'
+import { InterviewSchedulePanel } from './InterviewSchedulePanel'
 
 type DetailTab = 'info' | 'checklist' | 'log' | 'prep'
 
@@ -22,10 +23,17 @@ interface ApplicationDetailModalProps {
   onClose: () => void
   /** Update lamaran ini secara immutable */
   onUpdate: (updater: ApplicationUpdater) => void
+  /** Dibuka dari banner bentrok: langsung arahkan ke editor jadwal interview */
+  focusSchedule?: boolean
 }
 
 /** Modal Detail Lamaran: info + pindah status, checklist, activity log, latihan interview. */
-export function ApplicationDetailModal({ application, onClose, onUpdate }: ApplicationDetailModalProps) {
+export function ApplicationDetailModal({
+  application,
+  onClose,
+  onUpdate,
+  focusSchedule = false,
+}: ApplicationDetailModalProps) {
   const [tab, setTab] = useState<DetailTab>('info')
 
   return (
@@ -74,6 +82,14 @@ export function ApplicationDetailModal({ application, onClose, onUpdate }: Appli
             <dt>Terakhir Update</dt>
             <dd>{formatDateTime(application.lastUpdatedAt)}</dd>
           </dl>
+          {application.status === 'INTERVIEW' && (
+            <InterviewSchedulePanel
+              key={application.interviewDateTime}
+              application={application}
+              onUpdate={onUpdate}
+              autoFocus={focusSchedule}
+            />
+          )}
           {/* key = status: form di-reset setiap status berubah */}
           <StatusTransitionPanel key={application.status} application={application} onUpdate={onUpdate} />
         </>

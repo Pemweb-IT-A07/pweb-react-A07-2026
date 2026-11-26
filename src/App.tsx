@@ -43,6 +43,16 @@ function App() {
   /** Hanya simpan id; objek lamaran diambil dari `applications` (derived) agar selalu terbaru. */
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selectedApp = applications.find((app) => app.id === selectedId) ?? null
+  /** true jika detail dibuka dari banner bentrok (langsung ke editor jadwal) */
+  const [focusSchedule, setFocusSchedule] = useState(false)
+  const openDetail = useCallback((id: string) => {
+    setSelectedId(id)
+    setFocusSchedule(false)
+  }, [])
+  const openReschedule = useCallback((id: string) => {
+    setSelectedId(id)
+    setFocusSchedule(true)
+  }, [])
   const closeDetail = useCallback(() => setSelectedId(null), [])
 
   /** Tambah lamaran baru (id, timestamp, log pertama dibuat otomatis). */
@@ -158,7 +168,7 @@ function App() {
       />
 
       <main className="app-main">
-        <ConflictBanner conflicts={conflicts} />
+        <ConflictBanner conflicts={conflicts} onReschedule={openReschedule} />
 
         {activeTab === 'explore' && (
           <>
@@ -195,7 +205,7 @@ function App() {
               searchRef={searchRef}
               applications={applications}
               skills={kaptenSkills}
-              onOpen={setSelectedId}
+              onOpen={openDetail}
               onSimulate={simulateGhosting}
               onDelete={deleteApplication}
             />
@@ -215,6 +225,8 @@ function App() {
 
       {selectedApp && (
         <ApplicationDetailModal
+          key={selectedApp.id}
+          focusSchedule={focusSchedule}
           application={selectedApp}
           onClose={closeDetail}
           onUpdate={(updater) => updateApplication(selectedApp.id, updater)}
