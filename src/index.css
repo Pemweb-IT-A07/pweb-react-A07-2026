@@ -1346,3 +1346,38 @@ svg {
 .comparator__note {
   font-size: 13px;
 }
+
+/* ---------- Animasi ganti tema (View Transitions API, lihat useTheme) ---------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* Tema baru menyapu masuk: ke gelap dari kiri, ke terang dari kanan */
+:root[data-theme-switch='dark']::view-transition-new(root) {
+  animation: theme-wipe-from-left 600ms var(--ease);
+}
+:root[data-theme-switch='light']::view-transition-new(root) {
+  animation: theme-wipe-from-right 600ms var(--ease);
+}
+@keyframes theme-wipe-from-left {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes theme-wipe-from-right {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
