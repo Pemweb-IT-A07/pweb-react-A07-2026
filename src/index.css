@@ -879,3 +879,33 @@ textarea {
   font-size: 0.78rem;
   color: var(--text-muted);
 }
+
+/* ---------- Fitur 5: Interview Prep Timer ---------- */
+.prep__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.prep__timer {
+  font-family: var(--mono);
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.prep__timer.is-low {
+  color: var(--yellow);
+}
+.prep__timer.is-up {
+  color: var(--red);
+}
+.prep__question {
+  font-size: 1.1rem;
+  font-weight: 500;
+  min-height: 3em;
+}
+.prep__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
