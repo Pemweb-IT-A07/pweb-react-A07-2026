@@ -6,6 +6,7 @@ import { formatDateTime, formatRupiah } from '../utils'
 import { StatusTransitionPanel } from './StatusTransitionPanel'
 import { ChecklistPanel } from './ChecklistPanel'
 import { ActivityLogPanel } from './ActivityLogPanel'
+import { InterviewPrepTimer } from './InterviewPrepTimer'
 
 type DetailTab = 'info' | 'checklist' | 'log' | 'prep'
 
@@ -79,7 +80,7 @@ export function ApplicationDetailModal({ application, onClose, onUpdate }: Appli
       )}
       {tab === 'checklist' && <ChecklistPanel application={application} onUpdate={onUpdate} />}
       {tab === 'log' && <ActivityLogPanel application={application} onUpdate={onUpdate} />}
-      {tab === 'prep' && <p className="empty">Latihan interview akan tampil di sini.</p>}
+      {tab === 'prep' && <InterviewPrepTimer />}
     </Modal>
   )
 }
