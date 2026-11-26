@@ -46,6 +46,9 @@ export interface Application {
   activityLogs: ActivityLog[]
 }
 
+/** Fungsi updater immutable: terima lamaran lama, return objek lamaran BARU. */
+export type ApplicationUpdater = (app: Application) => Application
+
 /** Data dari form / lowongan sebelum jadi Application (id, log, dll dibuat otomatis). */
 export interface NewApplicationInput {
   company: string

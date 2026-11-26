@@ -1,8 +1,11 @@
 import { useState } from 'react'
-import type { Application } from '../types'
+import type { Application, ApplicationUpdater } from '../types'
 import { Modal } from './Modal'
 import { StatusBadge } from './StatusBadge'
 import { formatDateTime, formatRupiah } from '../utils'
+import { StatusTransitionPanel } from './StatusTransitionPanel'
+import { ChecklistPanel } from './ChecklistPanel'
+import { ActivityLogPanel } from './ActivityLogPanel'
 
 type DetailTab = 'info' | 'checklist' | 'log' | 'prep'
 
@@ -16,10 +19,12 @@ const DETAIL_TABS: { key: DetailTab; label: string }[] = [
 interface ApplicationDetailModalProps {
   application: Application
   onClose: () => void
+  /** Update lamaran ini secara immutable */
+  onUpdate: (updater: ApplicationUpdater) => void
 }
 
-/** Modal Detail Lamaran. Isi tiap tab diisi oleh fitur 4 (status, checklist, log) & 5 (timer). */
-export function ApplicationDetailModal({ application, onClose }: ApplicationDetailModalProps) {
+/** Modal Detail Lamaran: info + pindah status, checklist, activity log, latihan interview. */
+export function ApplicationDetailModal({ application, onClose, onUpdate }: ApplicationDetailModalProps) {
   const [tab, setTab] = useState<DetailTab>('info')
 
   return (
@@ -47,31 +52,33 @@ export function ApplicationDetailModal({ application, onClose }: ApplicationDeta
       </div>
 
       {tab === 'info' && (
-        <dl className="detail-grid">
-          <dt>Status</dt>
-          <dd>
-            <StatusBadge status={application.status} />
-          </dd>
-          <dt>Mode Kerja</dt>
-          <dd>{application.workMode}</dd>
-          <dt>Required Skills</dt>
-          <dd>{application.requiredSkills.join(', ') || '-'}</dd>
-          <dt>Versi CV</dt>
-          <dd>{application.cvVersion ?? '-'}</dd>
-          <dt>Tanggal Melamar</dt>
-          <dd>{application.appliedDate ?? '-'}</dd>
-          <dt>Jadwal Interview</dt>
-          <dd>{formatDateTime(application.interviewDateTime)}</dd>
-          <dt>Offer</dt>
-          <dd>
-            {formatRupiah(application.salaryOffer)}
-          </dd>
-          <dt>Terakhir Update</dt>
-          <dd>{formatDateTime(application.lastUpdatedAt)}</dd>
-        </dl>
+        <>
+          <dl className="detail-grid">
+            <dt>Status</dt>
+            <dd>
+              <StatusBadge status={application.status} />
+            </dd>
+            <dt>Mode Kerja</dt>
+            <dd>{application.workMode}</dd>
+            <dt>Required Skills</dt>
+            <dd>{application.requiredSkills.join(', ') || '-'}</dd>
+            <dt>Versi CV</dt>
+            <dd>{application.cvVersion ?? '-'}</dd>
+            <dt>Tanggal Melamar</dt>
+            <dd>{application.appliedDate ?? '-'}</dd>
+            <dt>Jadwal Interview</dt>
+            <dd>{formatDateTime(application.interviewDateTime)}</dd>
+            <dt>Offer</dt>
+            <dd>{formatRupiah(application.salaryOffer)}</dd>
+            <dt>Terakhir Update</dt>
+            <dd>{formatDateTime(application.lastUpdatedAt)}</dd>
+          </dl>
+          {/* key = status: form di-reset setiap status berubah */}
+          <StatusTransitionPanel key={application.status} application={application} onUpdate={onUpdate} />
+        </>
       )}
-      {tab === 'checklist' && <p className="empty">Checklist persiapan akan tampil di sini.</p>}
-      {tab === 'log' && <p className="empty">Riwayat aktivitas akan tampil di sini.</p>}
+      {tab === 'checklist' && <ChecklistPanel application={application} onUpdate={onUpdate} />}
+      {tab === 'log' && <ActivityLogPanel application={application} onUpdate={onUpdate} />}
       {tab === 'prep' && <p className="empty">Latihan interview akan tampil di sini.</p>}
     </Modal>
   )

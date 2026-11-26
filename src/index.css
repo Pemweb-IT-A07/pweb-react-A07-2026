@@ -799,3 +799,83 @@ textarea {
   border-radius: inherit;
   transition: width 0.2s ease;
 }
+
+/* ---------- Fitur 4: Detail Lamaran ---------- */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.panel .input,
+.panel .select {
+  background: var(--surface);
+}
+.error-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.checklist li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.checklist label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  flex: 1;
+}
+.checklist input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+}
+.checklist li.is-done span {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1rem;
+  border-left: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.timeline li {
+  position: relative;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: calc(-1rem - 6px);
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface-2);
+}
+.timeline time {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}

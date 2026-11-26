@@ -126,7 +126,13 @@ function App() {
         )}
       </main>
 
-      {selectedApp && <ApplicationDetailModal application={selectedApp} onClose={closeDetail} />}
+      {selectedApp && (
+        <ApplicationDetailModal
+          application={selectedApp}
+          onClose={closeDetail}
+          onUpdate={(updater) => updateApplication(selectedApp.id, updater)}
+        />
+      )}
     </>
   )
 }
