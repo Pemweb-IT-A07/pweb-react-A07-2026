@@ -498,3 +498,159 @@ textarea {
     transform: scaleX(0);
   }
 }
+
+/* ---------- Fitur 1: Profil Skill & Eksplorasi ---------- */
+.skill-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.chip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.chip--removable {
+  padding-right: 0.3rem;
+}
+.chip--removable button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+}
+.chip--removable button:hover {
+  color: var(--red);
+}
+.inline-form {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 420px;
+}
+
+.explorer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.toolbar {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+}
+@media (max-width: 860px) {
+  .toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .toolbar__search {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 480px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+.segmented {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.segmented button {
+  flex: 1;
+  border: 0;
+  background: var(--surface);
+  padding: 0.5rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.segmented button + button {
+  border-left: 1px solid var(--border);
+}
+.segmented button.is-active {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.explorer__summary {
+  min-height: 1.5em;
+  font-size: 0.85rem;
+}
+
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.job-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.job-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.match-badge {
+  font-size: 0.85rem;
+}
+.job-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+}
+.job-card__footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.state--error {
+  border-color: var(--red);
+  background: var(--red-soft);
+  color: var(--red);
+}
+.state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
