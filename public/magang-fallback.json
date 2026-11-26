@@ -1,0 +1,170 @@
+{
+  "job-count": 15,
+  "jobs": [
+    {
+      "id": 1001,
+      "title": "Frontend Intern",
+      "company_name": "Nusantara Cloud",
+      "category": "Software Development",
+      "candidate_required_location": "Surabaya (Hybrid)",
+      "salary": "Rp 4.500.000",
+      "tags": ["React", "TypeScript", "CSS"],
+      "job_type": "internship",
+      "publication_date": "2026-11-02T08:00:00"
+    },
+    {
+      "id": 1002,
+      "title": "Backend Engineer Intern",
+      "company_name": "Garuda Logistik",
+      "category": "Software Development",
+      "candidate_required_location": "Jakarta (Onsite)",
+      "salary": "Rp 5.000.000",
+      "tags": ["Node.js", "TypeScript", "PostgreSQL", "Docker"],
+      "job_type": "internship",
+      "publication_date": "2026-11-03T08:00:00"
+    },
+    {
+      "id": 1003,
+      "title": "Fullstack Web Intern",
+      "company_name": "Sinar Edukasi",
+      "category": "Software Development",
+      "candidate_required_location": "Remote (Indonesia)",
+      "salary": "Rp 3.500.000",
+      "tags": ["React", "Node.js", "MongoDB", "CSS"],
+      "job_type": "internship",
+      "publication_date": "2026-11-04T08:00:00"
+    },
+    {
+      "id": 1004,
+      "title": "Mobile Developer Intern",
+      "company_name": "Kopi Kita Digital",
+      "category": "Software Development",
+      "candidate_required_location": "Bandung (Hybrid)",
+      "salary": "Rp 4.000.000",
+      "tags": ["Flutter", "Dart", "Firebase"],
+      "job_type": "internship",
+      "publication_date": "2026-11-05T08:00:00"
+    },
+    {
+      "id": 1005,
+      "title": "DevOps Intern",
+      "company_name": "Archipelago Tech",
+      "category": "DevOps / Sysadmin",
+      "candidate_required_location": "Jakarta (Hybrid)",
+      "salary": "Rp 5.500.000",
+      "tags": ["Docker", "Kubernetes", "Linux", "CI/CD"],
+      "job_type": "internship",
+      "publication_date": "2026-11-06T08:00:00"
+    },
+    {
+      "id": 1006,
+      "title": "Data Analyst Intern",
+      "company_name": "Pasar Pintar",
+      "category": "Data",
+      "candidate_required_location": "Yogyakarta (Onsite)",
+      "salary": "Rp 3.800.000",
+      "tags": ["Python", "SQL", "Excel", "Tableau"],
+      "job_type": "internship",
+      "publication_date": "2026-11-07T08:00:00"
+    },
+    {
+      "id": 1007,
+      "title": "Machine Learning Intern",
+      "company_name": "Rupa AI",
+      "category": "Data",
+      "candidate_required_location": "Remote (Indonesia)",
+      "salary": "Rp 6.000.000",
+      "tags": ["Python", "TensorFlow", "Pandas", "Docker"],
+      "job_type": "internship",
+      "publication_date": "2026-11-08T08:00:00"
+    },
+    {
+      "id": 1008,
+      "title": "UI/UX Designer Intern",
+      "company_name": "Batik Studio",
+      "category": "Design",
+      "candidate_required_location": "Surabaya (Onsite)",
+      "salary": "Rp 3.000.000",
+      "tags": ["Figma", "UI Design", "Prototyping"],
+      "job_type": "internship",
+      "publication_date": "2026-11-09T08:00:00"
+    },
+    {
+      "id": 1009,
+      "title": "QA Engineer Intern",
+      "company_name": "Tokoloka",
+      "category": "QA",
+      "candidate_required_location": "Jakarta (Hybrid)",
+      "salary": "Rp 4.200.000",
+      "tags": ["Testing", "Cypress", "JavaScript"],
+      "job_type": "internship",
+      "publication_date": "2026-11-10T08:00:00"
+    },
+    {
+      "id": 1010,
+      "title": "React Developer Intern",
+      "company_name": "Merapi Fintech",
+      "category": "Software Development",
+      "candidate_required_location": "Remote (Indonesia)",
+      "salary": "Rp 5.200.000",
+      "tags": ["React", "TypeScript", "Redux", "Jest"],
+      "job_type": "internship",
+      "publication_date": "2026-11-11T08:00:00"
+    },
+    {
+      "id": 1011,
+      "title": "Golang Backend Intern",
+      "company_name": "Ojekin",
+      "category": "Software Development",
+      "candidate_required_location": "Jakarta (Onsite)",
+      "salary": "Rp 5.800.000",
+      "tags": ["Go", "PostgreSQL", "Redis", "Docker"],
+      "job_type": "internship",
+      "publication_date": "2026-11-12T08:00:00"
+    },
+    {
+      "id": 1012,
+      "title": "Cloud Engineer Intern",
+      "company_name": "Nusantara Cloud",
+      "category": "DevOps / Sysadmin",
+      "candidate_required_location": "Surabaya (Hybrid)",
+      "salary": "Rp 5.000.000",
+      "tags": ["AWS", "Terraform", "Linux"],
+      "job_type": "internship",
+      "publication_date": "2026-11-13T08:00:00"
+    },
+    {
+      "id": 1013,
+      "title": "Web Developer Intern (Vue)",
+      "company_name": "Desa Digital",
+      "category": "Software Development",
+      "candidate_required_location": "Malang (Hybrid)",
+      "salary": "Rp 3.200.000",
+      "tags": ["Vue", "JavaScript", "CSS", "Tailwind"],
+      "job_type": "internship",
+      "publication_date": "2026-11-14T08:00:00"
+    },
+    {
+      "id": 1014,
+      "title": "Cyber Security Intern",
+      "company_name": "Benteng Siber",
+      "category": "Security",
+      "candidate_required_location": "Jakarta (Onsite)",
+      "salary": "Rp 4.800.000",
+      "tags": ["Linux", "Networking", "Python", "OWASP"],
+      "job_type": "internship",
+      "publication_date": "2026-11-15T08:00:00"
+    },
+    {
+      "id": 1015,
+      "title": "Frontend Engineer Intern (Next.js)",
+      "company_name": "Lautan Commerce",
+      "category": "Software Development",
+      "candidate_required_location": "Remote (Indonesia)",
+      "salary": "Rp 5.500.000",
+      "tags": ["React", "Next.js", "TypeScript", "CSS"],
+      "job_type": "internship",
+      "publication_date": "2026-11-16T08:00:00"
+    }
+  ]
+}
