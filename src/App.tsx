@@ -9,6 +9,7 @@ import { StatusBadge } from './components/StatusBadge'
 import { ApplicationDetailModal } from './components/ApplicationDetailModal'
 import { SkillProfile } from './components/SkillProfile'
 import { JobExplorer } from './components/JobExplorer'
+import { ApplicationForm } from './components/ApplicationForm'
 
 const DEFAULT_SKILLS = ['React', 'TypeScript', 'CSS']
 
@@ -88,22 +89,8 @@ function App() {
           <>
             <section className="section-header">
               <h1>War Room Pipeline</h1>
-              <button
-                type="button"
-                className="btn btn--primary"
-                onClick={() =>
-                  addApplication({
-                    company: `Contoh Corp ${applications.length + 1}`,
-                    role: 'Frontend Intern',
-                    workMode: 'Hybrid',
-                    status: 'WISHLIST',
-                    requiredSkills: ['React', 'TypeScript', 'Docker'],
-                  })
-                }
-              >
-                + Tambah contoh
-              </button>
             </section>
+            <ApplicationForm applications={applications} onSubmit={addApplication} />
             {applications.length === 0 ? (
               <p className="empty">Belum ada lamaran.</p>
             ) : (
