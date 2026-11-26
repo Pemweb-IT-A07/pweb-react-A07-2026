@@ -5,7 +5,9 @@ import { useJobs } from '../hooks/useJobs'
 import type { JobSource } from '../services/jobService'
 import type { Application, JobListing } from '../types'
 import { calculateSkillMatch, isDuplicateApplication, normalizeText } from '../utils'
+import { RotateCw, WifiOff } from 'lucide-react'
 import { JobCard } from './JobCard'
+import { SearchInput } from './SearchInput'
 
 type JobSort = 'match' | 'newest'
 
@@ -60,17 +62,13 @@ export function JobExplorer({ searchRef, skills, applications, onSaveJob }: JobE
   return (
     <section className="explorer">
       <div className="toolbar card">
-        <label className="field toolbar__search">
-          <span>Cari lowongan</span>
-          <input
-            className="input"
-            type="search"
-            ref={searchRef}
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Judul, perusahaan, lokasi, atau skill (tekan /)"
-          />
-        </label>
+        <SearchInput
+          label="Cari lowongan"
+          value={keyword}
+          onChange={setKeyword}
+          placeholder="Posisi, perusahaan, atau skill"
+          inputRef={searchRef}
+        />
         <label className="field">
           <span>Kategori</span>
           <select className="select" value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -123,8 +121,9 @@ export function JobExplorer({ searchRef, skills, applications, onSaveJob }: JobE
           {keyword !== debouncedKeyword && ' · mencari…'}
         </p>
         {status === 'success' && (
-          <button type="button" className="btn btn--sm" onClick={retry}>
-            ↻ Muat Ulang
+          <button type="button" className="btn btn--ghost btn--sm" onClick={retry}>
+            <RotateCw size={14} strokeWidth={1.5} aria-hidden="true" />
+            Muat ulang
           </button>
         )}
       </div>
@@ -138,15 +137,16 @@ export function JobExplorer({ searchRef, skills, applications, onSaveJob }: JobE
 
       {status === 'error' && (
         <div className="state state--error" role="alert">
+          <WifiOff size={20} strokeWidth={1.5} aria-hidden="true" />
           <strong>Gagal memuat lowongan</strong>
           <p>{error}</p>
           <div className="state__actions">
             <button type="button" className="btn" onClick={retry}>
-              Coba Lagi
+              Coba lagi
             </button>
             {source !== 'local' && (
               <button type="button" className="btn btn--primary" onClick={() => changeSource('local')}>
-                Pakai Fallback Lokal
+                Pakai fallback lokal
               </button>
             )}
           </div>
@@ -156,8 +156,8 @@ export function JobExplorer({ searchRef, skills, applications, onSaveJob }: JobE
       {status === 'success' && visibleJobs.length === 0 && (
         <p className="empty">
           {jobs.length === 0
-            ? 'Belum ada lowongan dari sumber ini.'
-            : 'Tidak ada lowongan yang cocok dengan pencarian / filter.'}
+            ? 'Belum ada lowongan dari sumber ini'
+            : 'Tidak ada lowongan yang cocok dengan pencarian atau filter'}
         </p>
       )}
 

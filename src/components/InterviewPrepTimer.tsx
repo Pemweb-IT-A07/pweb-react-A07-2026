@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Pause, Play, RotateCcw, SkipForward } from 'lucide-react'
 
 const PREP_DURATION_SECONDS = 120
 
@@ -64,10 +65,10 @@ export function InterviewPrepTimer() {
       <p className="prep__question">{QUESTIONS[index]}</p>
 
       <div className="progress__track">
-        <div className="progress__bar" style={{ width: `${progress}%` }} />
+        <div className="progress__bar" style={{ transform: `scaleX(${progress / 100})` }} />
       </div>
 
-      {isTimeUp && <p className="field__error">Waktu habis! Klik Reset atau lanjut ke soal berikutnya.</p>}
+      {isTimeUp && <p className="field__error">Waktu habis. Reset atau lanjut ke soal berikutnya</p>}
 
       <div className="prep__actions">
         <button
@@ -76,13 +77,16 @@ export function InterviewPrepTimer() {
           onClick={() => setIsRunning((r) => !r)}
           disabled={isTimeUp}
         >
+          {isTicking ? <Pause size={16} strokeWidth={1.5} /> : <Play size={16} strokeWidth={1.5} />}
           {isTicking ? 'Pause' : 'Start'}
         </button>
         <button type="button" className="btn" onClick={reset}>
+          <RotateCcw size={16} strokeWidth={1.5} />
           Reset
         </button>
         <button type="button" className="btn" onClick={nextQuestion}>
-          Soal Berikutnya
+          <SkipForward size={16} strokeWidth={1.5} />
+          Soal berikutnya
         </button>
       </div>
     </section>

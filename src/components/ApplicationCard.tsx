@@ -1,3 +1,4 @@
+import { CalendarClock, Trash2 } from 'lucide-react'
 import type { Application } from '../types'
 import { formatDateTime, formatRupiah, getMatchLevel } from '../utils'
 import { StatusBadge } from './StatusBadge'
@@ -32,7 +33,7 @@ export function ApplicationCard({
         </div>
         <div className="app-card__badges">
           <StatusBadge status={app.status} />
-          {isGhosting && <span className="badge badge--red">Rawan Ghosting</span>}
+          {isGhosting && <span className="badge badge--outline-red">Rawan Ghosting</span>}
         </div>
       </header>
 
@@ -73,23 +74,37 @@ export function ApplicationCard({
           </span>
         </div>
         <div className="progress__track">
-          <div className="progress__bar" style={{ width: total === 0 ? 0 : `${(done / total) * 100}%` }} />
+          <div className="progress__bar" style={{ transform: `scaleX(${total === 0 ? 0 : done / total})` }} />
         </div>
       </div>
 
       <footer className="app-card__footer">
-        <span className="muted app-card__updated">Update: {formatDateTime(app.lastUpdatedAt)}</span>
+        <span className="muted app-card__updated" title="Terakhir update">
+          {formatDateTime(app.lastUpdatedAt)}
+        </span>
         <div className="app-card__actions">
           {canSimulate && (
-            <button type="button" className="btn btn--sm" onClick={() => onSimulate(app.id)}>
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              onClick={() => onSimulate(app.id)}
+              title="Mundurkan lastUpdatedAt 15 hari"
+            >
+              <CalendarClock size={16} strokeWidth={1.5} aria-hidden="true" />
               Simulasi +15 Hari
             </button>
           )}
           <button type="button" className="btn btn--sm" onClick={() => onOpen(app.id)}>
             Detail
           </button>
-          <button type="button" className="btn btn--sm btn--danger" onClick={() => onDelete(app.id)}>
-            Hapus
+          <button
+            type="button"
+            className="btn btn--ghost btn--icon btn--sm btn--danger"
+            onClick={() => onDelete(app.id)}
+            aria-label={`Hapus lamaran ${app.company}`}
+            title="Hapus"
+          >
+            <Trash2 size={16} strokeWidth={1.5} />
           </button>
         </div>
       </footer>

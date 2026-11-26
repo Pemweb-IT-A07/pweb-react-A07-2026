@@ -1,3 +1,5 @@
+import { Moon, Sun } from 'lucide-react'
+
 export type TabKey = 'explore' | 'pipeline' | 'offer'
 
 const TABS: { key: TabKey; label: string }[] = [
@@ -24,17 +26,9 @@ export function Navbar({ activeTab, onTabChange, applicationCount, isDark, onTog
             AMM
           </span>
           <span className="navbar__title">Aku Mw Magang</span>
-          <button
-            type="button"
-            className="btn btn--sm theme-toggle"
-            onClick={onToggleTheme}
-            aria-pressed={isDark}
-            title={isDark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
-          >
-            {isDark ? '☀ Terang' : '☾ Gelap'}
-          </button>
         </div>
 
+        <div className="navbar__right">
         <nav className="navbar__tabs" role="tablist" aria-label="Menu utama">
           {TABS.map((tab) => (
             <button
@@ -52,6 +46,17 @@ export function Navbar({ activeTab, onTabChange, applicationCount, isDark, onTog
             </button>
           ))}
         </nav>
+        <button
+          type="button"
+          className="btn btn--ghost btn--icon"
+          onClick={onToggleTheme}
+          aria-pressed={isDark}
+          aria-label={isDark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
+          title={isDark ? 'Mode terang' : 'Mode gelap'}
+        >
+          {isDark ? <Sun size={16} strokeWidth={1.5} /> : <Moon size={16} strokeWidth={1.5} />}
+        </button>
+        </div>
       </div>
     </header>
   )

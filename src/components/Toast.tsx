@@ -1,3 +1,5 @@
+import { X } from 'lucide-react'
+
 interface ToastProps {
   message: string
   /** Label tombol aksi, misal "Undo". Tidak tampil jika onAction kosong. */
@@ -22,7 +24,7 @@ export function Toast({ message, actionLabel, onAction, onClose, duration }: Toa
         </button>
       )}
       <button type="button" className="toast__close" aria-label="Tutup" onClick={onClose}>
-        ×
+        <X size={16} strokeWidth={1.5} />
       </button>
       {duration !== undefined && (
         <span className="toast__progress" style={{ animationDuration: `${duration}ms` }} />

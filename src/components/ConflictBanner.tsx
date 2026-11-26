@@ -1,3 +1,4 @@
+import { TriangleAlert } from 'lucide-react'
 import type { InterviewConflict } from '../types'
 import { formatDateTime } from '../utils'
 
@@ -11,15 +12,20 @@ export function ConflictBanner({ conflicts }: ConflictBannerProps) {
 
   return (
     <div className="banner banner--danger" role="alert">
-      <strong>⚠ Jadwal interview bentrok ({conflicts.length})</strong>
+      <TriangleAlert size={16} strokeWidth={1.5} aria-hidden="true" />
+      <div>
+      <strong>
+        {conflicts.length === 1 ? 'Jadwal interview bentrok' : `${conflicts.length} jadwal interview bentrok`}
+      </strong>
       <ul>
         {conflicts.map(({ a, b, diffMinutes }) => (
           <li key={`${a.id}-${b.id}`}>
             {a.company} ({formatDateTime(a.interviewDateTime)}) dan {b.company} (
-            {formatDateTime(b.interviewDateTime)}) hanya berselisih {diffMinutes} menit.
+            {formatDateTime(b.interviewDateTime)}), selisih {diffMinutes} menit
           </li>
         ))}
       </ul>
+      </div>
     </div>
   )
 }

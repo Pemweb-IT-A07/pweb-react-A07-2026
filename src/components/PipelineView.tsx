@@ -3,6 +3,7 @@ import type { RefObject } from 'react'
 import type { Application, ApplicationStatus } from '../types'
 import { calculateSkillMatch, isGhostingRisk, normalizeText, STATUS_LABEL } from '../utils'
 import { ApplicationCard } from './ApplicationCard'
+import { SearchInput } from './SearchInput'
 import { useNow } from '../hooks/useNow'
 
 type PipelineSort = 'newest' | 'interview' | 'offer'
@@ -69,17 +70,13 @@ export function PipelineView({
   return (
     <section className="pipeline">
       <div className="toolbar toolbar--pipeline card">
-        <label className="field toolbar__search">
-          <span>Cari lamaran</span>
-          <input
-            className="input"
-            type="search"
-            ref={searchRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Perusahaan, role, atau versi CV (tekan /)"
-          />
-        </label>
+        <SearchInput
+          label="Cari lamaran"
+          value={query}
+          onChange={setQuery}
+          placeholder="Perusahaan, role, atau versi CV"
+          inputRef={searchRef}
+        />
         <label className="field">
           <span>Status</span>
           <select

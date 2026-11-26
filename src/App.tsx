@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Plus, X } from 'lucide-react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useTheme } from './hooks/useTheme'
 import { useSlashFocus } from './hooks/useSlashFocus'
@@ -32,6 +33,8 @@ function App() {
   const [kaptenSkills, setKaptenSkills] = useLocalStorage<string[]>('amm:kaptenSkills', DEFAULT_SKILLS)
 
   const [activeTab, setActiveTab] = useState<TabKey>('explore')
+  /** Form Tambah Lamaran dilipat secara default supaya daftar lamaran langsung terlihat */
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   // Bonus: dark mode (useLocalStorage) + shortcut "/" fokus ke search bar (useRef)
   const { theme, toggleTheme } = useTheme()
@@ -175,10 +178,19 @@ function App() {
         {activeTab === 'pipeline' && (
           <>
             <section className="section-header">
-              <h1>War Room Pipeline</h1>
+              <h1>War Room Lamaran</h1>
+              <button
+                type="button"
+                className={`btn ${isFormOpen ? '' : 'btn--primary'}`}
+                aria-expanded={isFormOpen}
+                onClick={() => setIsFormOpen((open) => !open)}
+              >
+                {isFormOpen ? <X size={16} strokeWidth={1.5} /> : <Plus size={16} strokeWidth={1.5} />}
+                {isFormOpen ? 'Tutup form' : 'Tambah lamaran'}
+              </button>
             </section>
             <StatsCards applications={applications} />
-            <ApplicationForm applications={applications} onSubmit={addApplication} />
+            {isFormOpen && <ApplicationForm applications={applications} onSubmit={addApplication} />}
             <PipelineView
               searchRef={searchRef}
               applications={applications}
@@ -193,7 +205,7 @@ function App() {
         {activeTab === 'offer' && (
           <>
             <section className="section-header">
-              <h1>Dashboard & Bandingkan Offer</h1>
+              <h1>Statistik & Offer</h1>
             </section>
             <StatsCards applications={applications} />
             <OfferComparator applications={applications} skills={kaptenSkills} />
