@@ -85,9 +85,9 @@ export function OfferComparator({ applications, skills }: OfferComparatorProps) 
               <th scope="col">Kriteria</th>
               {[a, b].map((s) => (
                 <th key={s.app.id} scope="col" className={winner === s.app.id ? 'is-winner' : ''}>
+                  {winner === s.app.id && <span className="badge badge--winner">Rekomendasi Terbaik</span>}
                   {s.app.company}
                   <span className="muted"> · {s.app.role}</span>
-                  {winner === s.app.id && <span className="badge badge--green">Rekomendasi Terbaik</span>}
                 </th>
               ))}
             </tr>

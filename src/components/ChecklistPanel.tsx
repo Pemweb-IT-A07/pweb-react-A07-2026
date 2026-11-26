@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { Trash2 } from 'lucide-react'
 import type { Application, ApplicationUpdater } from '../types'
 import { createChecklistItem } from '../utils'
 
@@ -48,7 +49,7 @@ export function ChecklistPanel({ application, onUpdate }: ChecklistPanelProps) {
           </span>
         </div>
         <div className="progress__track">
-          <div className="progress__bar" style={{ width: `${percent}%` }} />
+          <div className="progress__bar" style={{ transform: `scaleX(${percent / 100})` }} />
         </div>
       </div>
 
@@ -77,11 +78,12 @@ export function ChecklistPanel({ application, onUpdate }: ChecklistPanelProps) {
               </label>
               <button
                 type="button"
-                className="btn btn--sm btn--ghost btn--danger"
+                className="btn btn--sm btn--ghost btn--icon btn--danger"
                 aria-label={`Hapus ${item.text}`}
+                title="Hapus"
                 onClick={() => removeItem(item.id)}
               >
-                Hapus
+                <Trash2 size={16} strokeWidth={1.5} />
               </button>
             </li>
           ))}

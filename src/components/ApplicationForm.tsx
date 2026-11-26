@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Application, NewApplicationInput, WorkMode } from '../types'
+import { Check } from 'lucide-react'
 import { isDuplicateApplication } from '../utils'
 
 type InitialStatus = NewApplicationInput['status']
@@ -76,6 +77,11 @@ export function ApplicationForm({ applications, onSubmit }: ApplicationFormProps
   const cvVersionRef = useRef<HTMLInputElement>(null)
   const appliedDateRef = useRef<HTMLInputElement>(null)
 
+  // Form baru dibuka -> langsung fokus ke input pertama
+  useEffect(() => {
+    companyRef.current?.focus()
+  }, [])
+
   const fieldRefs = {
     company: companyRef,
     role: roleRef,
@@ -123,7 +129,7 @@ export function ApplicationForm({ applications, onSubmit }: ApplicationFormProps
 
   return (
     <form className="card app-form" onSubmit={handleSubmit} noValidate>
-      <h2>Tambah Lamaran Manual</h2>
+      <h2>Tambah lamaran manual</h2>
 
       <div className="form-grid">
         <label className="field">
@@ -223,7 +229,12 @@ export function ApplicationForm({ applications, onSubmit }: ApplicationFormProps
       </div>
 
       <div className="app-form__footer">
-        {success && <span className="form-success">✓ {success}</span>}
+        {success && (
+          <span className="form-success">
+            <Check size={16} strokeWidth={1.5} aria-hidden="true" />
+            {success}
+          </span>
+        )}
         <button type="submit" className="btn btn--primary">
           Tambah Lamaran
         </button>

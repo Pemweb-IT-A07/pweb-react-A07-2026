@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { X } from 'lucide-react'
 import { normalizeText } from '../utils'
 
 interface SkillProfileProps {
@@ -45,7 +46,7 @@ export function SkillProfile({ skills, onChange }: SkillProfileProps) {
           <li key={skill} className="chip chip--removable">
             {skill}
             <button type="button" aria-label={`Hapus ${skill}`} onClick={() => removeSkill(skill)}>
-              ×
+              <X size={12} strokeWidth={2} />
             </button>
           </li>
         ))}
