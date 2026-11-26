@@ -1,18 +1,21 @@
 import { useCallback, useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import type { Application, NewApplicationInput } from './types'
+import type { Application, JobListing, NewApplicationInput } from './types'
+import { inferWorkMode } from './services/jobService'
 import { createApplication } from './utils'
 import { Navbar } from './components/Navbar'
 import type { TabKey } from './components/Navbar'
 import { StatusBadge } from './components/StatusBadge'
 import { ApplicationDetailModal } from './components/ApplicationDetailModal'
+import { SkillProfile } from './components/SkillProfile'
+import { JobExplorer } from './components/JobExplorer'
 
 const DEFAULT_SKILLS = ['React', 'TypeScript', 'CSS']
 
 function App() {
   // State utama, persisten di localStorage
   const [applications, setApplications] = useLocalStorage<Application[]>('amm:applications', [])
-  const [kaptenSkills] = useLocalStorage<string[]>('amm:kaptenSkills', DEFAULT_SKILLS)
+  const [kaptenSkills, setKaptenSkills] = useLocalStorage<string[]>('amm:kaptenSkills', DEFAULT_SKILLS)
 
   const [activeTab, setActiveTab] = useState<TabKey>('explore')
   /** Hanya simpan id; objek lamaran diambil dari `applications` (derived) agar selalu terbaru. */
@@ -42,6 +45,21 @@ function App() {
   )
 
   /** Hapus lamaran; return data yang dihapus (untuk Undo). */
+  /** Simpan lowongan ke daftar lamaran sebagai WISHLIST (`tags` -> requiredSkills). */
+  const saveJobToWishlist = useCallback(
+    (job: JobListing) => {
+      addApplication({
+        company: job.company_name,
+        role: job.title,
+        workMode: inferWorkMode(job),
+        status: 'WISHLIST',
+        requiredSkills: job.tags,
+        initialLogMessage: 'Disimpan ke Wishlist dari Eksplorasi Lowongan',
+      })
+    },
+    [addApplication],
+  )
+
   const deleteApplication = useCallback(
     (id: string): Application | undefined => {
       const removed = applications.find((app) => app.id === id)
@@ -57,10 +75,13 @@ function App() {
 
       <main className="app-main">
         {activeTab === 'explore' && (
-          <section className="section-header">
-            <h1>Eksplorasi Lowongan</h1>
-            <p className="muted">Skill Kapten: {kaptenSkills.join(', ')}</p>
-          </section>
+          <>
+            <section className="section-header">
+              <h1>Eksplorasi Lowongan</h1>
+            </section>
+            <SkillProfile skills={kaptenSkills} onChange={setKaptenSkills} />
+            <JobExplorer skills={kaptenSkills} applications={applications} onSaveJob={saveJobToWishlist} />
+          </>
         )}
 
         {activeTab === 'pipeline' && (

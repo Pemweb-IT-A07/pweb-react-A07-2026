@@ -1,4 +1,4 @@
-import type { JobListing, RemotiveResponse } from '../types'
+import type { JobListing, RemotiveResponse, WorkMode } from '../types'
 
 export const REMOTIVE_URL = 'https://remotive.com/api/remote-jobs?category=software-dev&limit=30'
 export const FALLBACK_URL = '/magang-fallback.json'
@@ -53,4 +53,12 @@ export function fetchJobs(source: JobSource, signal?: AbortSignal): Promise<JobL
 /** Required skill sebuah lowongan = field `tags`. */
 export function getRequiredSkills(job: JobListing): string[] {
   return job.tags
+}
+
+/** Tebak mode kerja dari lokasi, misal "Surabaya (Hybrid)". Remotive = remote. */
+export function inferWorkMode(job: JobListing): WorkMode {
+  const location = job.candidate_required_location.toLowerCase()
+  if (location.includes('hybrid')) return 'Hybrid'
+  if (location.includes('onsite') || location.includes('on-site')) return 'Onsite'
+  return 'Remote'
 }
