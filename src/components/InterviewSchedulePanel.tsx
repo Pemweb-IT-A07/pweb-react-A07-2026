@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { CalendarClock } from 'lucide-react'
 import type { Application, ApplicationUpdater } from '../types'
@@ -7,21 +7,12 @@ import { createActivityLog, formatDateTime } from '../utils'
 interface InterviewSchedulePanelProps {
   application: Application
   onUpdate: (updater: ApplicationUpdater) => void
-  /** true jika dibuka dari banner bentrok: panel di-scroll & input langsung fokus */
-  autoFocus?: boolean
 }
 
 /** Ubah jadwal interview untuk lamaran berstatus INTERVIEW (untuk menyelesaikan bentrok). */
-export function InterviewSchedulePanel({ application: app, onUpdate, autoFocus = false }: InterviewSchedulePanelProps) {
+export function InterviewSchedulePanel({ application: app, onUpdate }: InterviewSchedulePanelProps) {
   const [value, setValue] = useState(app.interviewDateTime ?? '')
   const [error, setError] = useState<string | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (!autoFocus) return
-    inputRef.current?.scrollIntoView({ block: 'nearest' })
-    inputRef.current?.focus()
-  }, [autoFocus])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -48,11 +39,10 @@ export function InterviewSchedulePanel({ application: app, onUpdate, autoFocus =
   }
 
   return (
-    <form className={`panel ${autoFocus ? 'panel--highlight' : ''}`} onSubmit={handleSubmit} noValidate>
+    <form className="panel" onSubmit={handleSubmit} noValidate>
       <h3>Jadwal interview</h3>
       <div className="inline-form">
         <input
-          ref={inputRef}
           className={`input ${error ? 'is-invalid' : ''}`}
           type="datetime-local"
           value={value}
