@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Plus, X } from 'lucide-react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useTheme } from './hooks/useTheme'
@@ -21,6 +22,8 @@ import { OfferComparator } from './components/OfferComparator'
 
 const DEFAULT_SKILLS = ['React', 'TypeScript', 'CSS']
 const UNDO_DURATION_MS = 5000
+/** Urutan tab di navbar, menentukan arah animasi pindah tab */
+const TAB_ORDER: TabKey[] = ['explore', 'pipeline', 'offer']
 
 /** Lamaran yang baru dihapus + posisinya, untuk dikembalikan utuh saat Undo. */
 interface DeletedEntry {
@@ -34,6 +37,31 @@ function App() {
   const [kaptenSkills, setKaptenSkills] = useLocalStorage<string[]>('amm:kaptenSkills', DEFAULT_SKILLS)
 
   const [activeTab, setActiveTab] = useState<TabKey>('explore')
+
+  /**
+   * Pindah tab dengan View Transitions API: isi halaman bergeser ke kiri/kanan
+   * sesuai urutan tab, navbar tetap diam. Tanpa dukungan browser / reduced motion
+   * -> langsung pindah tanpa animasi.
+   */
+  const changeTab = useCallback(
+    (next: TabKey) => {
+      if (next === activeTab) return
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+      if (!document.startViewTransition || reduceMotion) {
+        setActiveTab(next)
+        return
+      }
+      const root = document.documentElement
+      root.dataset.tabDir = TAB_ORDER.indexOf(next) > TAB_ORDER.indexOf(activeTab) ? 'next' : 'prev'
+      const transition = document.startViewTransition(() => {
+        flushSync(() => setActiveTab(next))
+      })
+      transition.finished.finally(() => {
+        delete root.dataset.tabDir
+      })
+    },
+    [activeTab],
+  )
   /** Form Tambah Lamaran dilipat secara default supaya daftar lamaran langsung terlihat */
   const [isFormOpen, setIsFormOpen] = useState(false)
 
@@ -180,7 +208,7 @@ function App() {
     <>
       <Navbar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={changeTab}
         applicationCount={applications.length}
         isDark={theme === 'dark'}
         onToggleTheme={toggleTheme}

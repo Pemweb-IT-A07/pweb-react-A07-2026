@@ -1381,3 +1381,61 @@ svg {
     animation: none !important;
   }
 }
+
+/* ---------- Animasi pindah tab (View Transitions API, lihat changeTab di App) ---------- */
+/* Nama transisi hanya dipasang saat pindah tab, supaya animasi ganti tema tetap satu sapuan penuh */
+:root[data-tab-dir] .navbar {
+  view-transition-name: navbar;
+}
+:root[data-tab-dir] .app-main {
+  view-transition-name: page;
+}
+::view-transition-group(navbar) {
+  animation: none;
+}
+:root[data-tab-dir='next']::view-transition-old(page) {
+  animation: page-out-left 200ms var(--ease) both;
+}
+:root[data-tab-dir='next']::view-transition-new(page) {
+  animation: page-in-right 250ms var(--ease) both;
+}
+:root[data-tab-dir='prev']::view-transition-old(page) {
+  animation: page-out-right 200ms var(--ease) both;
+}
+:root[data-tab-dir='prev']::view-transition-new(page) {
+  animation: page-in-left 250ms var(--ease) both;
+}
+/* Tinggi halaman bisa beda antar tab: jangan animasikan ukuran grup */
+::view-transition-group(page) {
+  animation-duration: 0s;
+}
+@keyframes page-out-left {
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+@keyframes page-out-right {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+@keyframes page-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+@keyframes page-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page),
+  ::view-transition-new(page) {
+    animation: none !important;
+  }
+}
