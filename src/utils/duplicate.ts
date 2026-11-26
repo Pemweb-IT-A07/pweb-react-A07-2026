@@ -1,4 +1,5 @@
 import type { Application } from '../types'
+import { normalizeText } from './text'
 
 /**
  * true jika sudah ada lamaran dengan company + role sama (case-insensitive, trim).
@@ -10,10 +11,9 @@ export function isDuplicateApplication(
   role: string,
   excludeId?: string,
 ): boolean {
-  // TODO [T1]: implementasi
-  void applications
-  void company
-  void role
-  void excludeId
-  return false
+  const c = normalizeText(company)
+  const r = normalizeText(role)
+  return applications.some(
+    (app) => app.id !== excludeId && normalizeText(app.company) === c && normalizeText(app.role) === r,
+  )
 }

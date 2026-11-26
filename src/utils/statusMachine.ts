@@ -3,6 +3,7 @@ import type {
   ApplicationStatus,
   StatusTransitionPayload,
 } from '../types'
+import { createActivityLog } from './factory'
 
 /**
  * Status tujuan yang sah dari tiap status.
@@ -30,17 +31,12 @@ export const STATUS_LABEL: Record<ApplicationStatus, string> = {
 
 /** Daftar status tujuan yang sah dari `from`. */
 export function getAllowedTransitions(from: ApplicationStatus): ApplicationStatus[] {
-  // TODO [T1]: implementasi
-  void from
-  return []
+  return STATUS_TRANSITIONS[from]
 }
 
 /** true jika `from` -> `to` sesuai diagram state machine. */
 export function canTransition(from: ApplicationStatus, to: ApplicationStatus): boolean {
-  // TODO [T1]: implementasi
-  void from
-  void to
-  return false
+  return STATUS_TRANSITIONS[from].includes(to)
 }
 
 /**
@@ -55,9 +51,48 @@ export function validateTransition(
   to: ApplicationStatus,
   payload: StatusTransitionPayload,
 ): string[] {
-  // TODO [T1]: implementasi
-  void app
-  void to
-  void payload
-  return []
+  if (!canTransition(app.status, to)) {
+    return [`Status ${STATUS_LABEL[app.status]} tidak bisa pindah ke ${STATUS_LABEL[to]}`]
+  }
+
+  const errors: string[] = []
+  if (to === 'APPLIED') {
+    if (!(payload.cvVersion ?? '').trim()) errors.push('Versi CV wajib diisi')
+    if (!payload.appliedDate) errors.push('Tanggal melamar wajib diisi')
+  }
+  if (to === 'INTERVIEW') {
+    if (!payload.interviewDateTime) errors.push('Jadwal interview wajib diisi')
+  }
+  if (to === 'OFFER') {
+    if (!payload.salaryOffer || payload.salaryOffer <= 0) errors.push('Nominal offer harus lebih dari 0')
+    if (!payload.workMode) errors.push('Mode kerja wajib dipilih')
+  }
+  return errors
+}
+
+/**
+ * Hasilkan lamaran BARU dengan status `to` (tanpa mutasi `app`):
+ * field payload digabung, lastUpdatedAt diperbarui, dan activity log ditambah.
+ * Panggil validateTransition dulu; fungsi ini tidak memvalidasi ulang.
+ */
+export function applyTransition(
+  app: Application,
+  to: ApplicationStatus,
+  payload: StatusTransitionPayload,
+  now: Date = new Date(),
+): Application {
+  const timestamp = now.toISOString()
+  const definedPayload = Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== ''),
+  ) as StatusTransitionPayload
+  return {
+    ...app,
+    ...definedPayload,
+    status: to,
+    lastUpdatedAt: timestamp,
+    activityLogs: [
+      ...app.activityLogs,
+      createActivityLog(`Status: ${STATUS_LABEL[app.status]} → ${STATUS_LABEL[to]}`, timestamp),
+    ],
+  }
 }
