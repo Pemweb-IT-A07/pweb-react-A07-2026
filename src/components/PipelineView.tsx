@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import type { RefObject } from 'react'
 import type { Application, ApplicationStatus } from '../types'
 import { calculateSkillMatch, isGhostingRisk, normalizeText, STATUS_LABEL } from '../utils'
 import { ApplicationCard } from './ApplicationCard'
@@ -10,6 +11,8 @@ type StatusFilter = ApplicationStatus | 'ALL'
 const STATUS_OPTIONS = Object.keys(STATUS_LABEL) as ApplicationStatus[]
 
 interface PipelineViewProps {
+  /** Ref input search, untuk shortcut "/" */
+  searchRef?: RefObject<HTMLInputElement | null>
   applications: Application[]
   skills: string[]
   onOpen: (id: string) => void
@@ -23,7 +26,14 @@ function interviewTime(app: Application): number {
   return Number.isNaN(t) ? Number.POSITIVE_INFINITY : t
 }
 
-export function PipelineView({ applications, skills, onOpen, onSimulate, onDelete }: PipelineViewProps) {
+export function PipelineView({
+  searchRef,
+  applications,
+  skills,
+  onOpen,
+  onSimulate,
+  onDelete,
+}: PipelineViewProps) {
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
   const [onlyGhosting, setOnlyGhosting] = useState(false)
@@ -64,9 +74,10 @@ export function PipelineView({ applications, skills, onOpen, onSimulate, onDelet
           <input
             className="input"
             type="search"
+            ref={searchRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Perusahaan, role, atau versi CV"
+            placeholder="Perusahaan, role, atau versi CV (tekan /)"
           />
         </label>
         <label className="field">

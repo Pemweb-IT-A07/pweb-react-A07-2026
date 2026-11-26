@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import type { RefObject } from 'react'
 import { useDebounce } from '../hooks/useDebounce'
 import { useJobs } from '../hooks/useJobs'
 import type { JobSource } from '../services/jobService'
@@ -9,6 +10,8 @@ import { JobCard } from './JobCard'
 type JobSort = 'match' | 'newest'
 
 interface JobExplorerProps {
+  /** Ref input search, untuk shortcut "/" */
+  searchRef?: RefObject<HTMLInputElement | null>
   skills: string[]
   applications: Application[]
   onSaveJob: (job: JobListing) => void
@@ -16,7 +19,7 @@ interface JobExplorerProps {
 
 const ALL_CATEGORIES = 'ALL'
 
-export function JobExplorer({ skills, applications, onSaveJob }: JobExplorerProps) {
+export function JobExplorer({ searchRef, skills, applications, onSaveJob }: JobExplorerProps) {
   const [source, setSource] = useState<JobSource>('remote')
   const { status, jobs, error, retry } = useJobs(source)
 
@@ -62,9 +65,10 @@ export function JobExplorer({ skills, applications, onSaveJob }: JobExplorerProp
           <input
             className="input"
             type="search"
+            ref={searchRef}
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Judul, perusahaan, lokasi, atau skill"
+            placeholder="Judul, perusahaan, lokasi, atau skill (tekan /)"
           />
         </label>
         <label className="field">

@@ -11,9 +11,11 @@ interface NavbarProps {
   onTabChange: (tab: TabKey) => void
   /** Jumlah lamaran, ditampilkan sebagai badge di tab Pipeline */
   applicationCount: number
+  isDark: boolean
+  onToggleTheme: () => void
 }
 
-export function Navbar({ activeTab, onTabChange, applicationCount }: NavbarProps) {
+export function Navbar({ activeTab, onTabChange, applicationCount, isDark, onToggleTheme }: NavbarProps) {
   return (
     <header className="navbar">
       <div className="navbar__inner">
@@ -22,6 +24,15 @@ export function Navbar({ activeTab, onTabChange, applicationCount }: NavbarProps
             AMM
           </span>
           <span className="navbar__title">Aku Mw Magang</span>
+          <button
+            type="button"
+            className="btn btn--sm theme-toggle"
+            onClick={onToggleTheme}
+            aria-pressed={isDark}
+            title={isDark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
+          >
+            {isDark ? '☀ Terang' : '☾ Gelap'}
+          </button>
         </div>
 
         <nav className="navbar__tabs" role="tablist" aria-label="Menu utama">

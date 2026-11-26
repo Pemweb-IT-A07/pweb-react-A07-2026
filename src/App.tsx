@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import { useTheme } from './hooks/useTheme'
+import { useSlashFocus } from './hooks/useSlashFocus'
 import type { Application, JobListing, NewApplicationInput } from './types'
 import { inferWorkMode } from './services/jobService'
 import { createActivityLog, createApplication, DAY_MS, findInterviewConflicts } from './utils'
@@ -30,6 +32,11 @@ function App() {
   const [kaptenSkills, setKaptenSkills] = useLocalStorage<string[]>('amm:kaptenSkills', DEFAULT_SKILLS)
 
   const [activeTab, setActiveTab] = useState<TabKey>('explore')
+
+  // Bonus: dark mode (useLocalStorage) + shortcut "/" fokus ke search bar (useRef)
+  const { theme, toggleTheme } = useTheme()
+  const searchRef = useRef<HTMLInputElement>(null)
+  useSlashFocus(searchRef)
   /** Hanya simpan id; objek lamaran diambil dari `applications` (derived) agar selalu terbaru. */
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selectedApp = applications.find((app) => app.id === selectedId) ?? null
@@ -139,7 +146,13 @@ function App() {
 
   return (
     <>
-      <Navbar activeTab={activeTab} onTabChange={setActiveTab} applicationCount={applications.length} />
+      <Navbar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        applicationCount={applications.length}
+        isDark={theme === 'dark'}
+        onToggleTheme={toggleTheme}
+      />
 
       <main className="app-main">
         <ConflictBanner conflicts={conflicts} />
@@ -150,7 +163,12 @@ function App() {
               <h1>Eksplorasi Lowongan</h1>
             </section>
             <SkillProfile skills={kaptenSkills} onChange={setKaptenSkills} />
-            <JobExplorer skills={kaptenSkills} applications={applications} onSaveJob={saveJobToWishlist} />
+            <JobExplorer
+              searchRef={searchRef}
+              skills={kaptenSkills}
+              applications={applications}
+              onSaveJob={saveJobToWishlist}
+            />
           </>
         )}
 
@@ -162,6 +180,7 @@ function App() {
             <StatsCards applications={applications} />
             <ApplicationForm applications={applications} onSubmit={addApplication} />
             <PipelineView
+              searchRef={searchRef}
               applications={applications}
               skills={kaptenSkills}
               onOpen={setSelectedId}
