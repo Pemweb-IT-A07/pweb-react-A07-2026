@@ -1,7 +1,8 @@
 import type { JobListing, RemotiveResponse, WorkMode } from '../types'
 
 export const REMOTIVE_URL = 'https://remotive.com/api/remote-jobs?category=software-dev&limit=30'
-export const FALLBACK_URL = '/magang-fallback.json'
+/** Ikut base path Vite, supaya tetap jalan saat di-deploy ke subpath (GitHub Pages). */
+export const FALLBACK_URL = `${import.meta.env.BASE_URL}magang-fallback.json`
 
 export type JobSource = 'remote' | 'local'
 
