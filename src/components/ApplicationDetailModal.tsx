@@ -23,8 +23,6 @@ interface ApplicationDetailModalProps {
   onClose: () => void
   /** Update lamaran ini secara immutable */
   onUpdate: (updater: ApplicationUpdater) => void
-  /** Dibuka dari banner bentrok: langsung arahkan ke editor jadwal interview */
-  focusSchedule?: boolean
 }
 
 /** Modal Detail Lamaran: info + pindah status, checklist, activity log, latihan interview. */
@@ -32,7 +30,6 @@ export function ApplicationDetailModal({
   application,
   onClose,
   onUpdate,
-  focusSchedule = false,
 }: ApplicationDetailModalProps) {
   const [tab, setTab] = useState<DetailTab>('info')
 
@@ -87,7 +84,6 @@ export function ApplicationDetailModal({
               key={application.interviewDateTime}
               application={application}
               onUpdate={onUpdate}
-              autoFocus={focusSchedule}
             />
           )}
           {/* key = status: form di-reset setiap status berubah */}

@@ -5,7 +5,7 @@ import { useTheme } from './hooks/useTheme'
 import { useSlashFocus } from './hooks/useSlashFocus'
 import type { Application, JobListing, NewApplicationInput } from './types'
 import { inferWorkMode } from './services/jobService'
-import { createActivityLog, createApplication, DAY_MS, findInterviewConflicts } from './utils'
+import { createActivityLog, createApplication, DAY_MS, findInterviewConflicts, formatDateTime } from './utils'
 import { Navbar } from './components/Navbar'
 import type { TabKey } from './components/Navbar'
 import { ApplicationDetailModal } from './components/ApplicationDetailModal'
@@ -14,6 +14,7 @@ import { JobExplorer } from './components/JobExplorer'
 import { ApplicationForm } from './components/ApplicationForm'
 import { PipelineView } from './components/PipelineView'
 import { ConflictBanner } from './components/ConflictBanner'
+import { RescheduleDialog } from './components/RescheduleDialog'
 import { Toast } from './components/Toast'
 import { StatsCards } from './components/StatsCards'
 import { OfferComparator } from './components/OfferComparator'
@@ -43,16 +44,8 @@ function App() {
   /** Hanya simpan id; objek lamaran diambil dari `applications` (derived) agar selalu terbaru. */
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selectedApp = applications.find((app) => app.id === selectedId) ?? null
-  /** true jika detail dibuka dari banner bentrok (langsung ke editor jadwal) */
-  const [focusSchedule, setFocusSchedule] = useState(false)
-  const openDetail = useCallback((id: string) => {
-    setSelectedId(id)
-    setFocusSchedule(false)
-  }, [])
-  const openReschedule = useCallback((id: string) => {
-    setSelectedId(id)
-    setFocusSchedule(true)
-  }, [])
+  /** Dialog atur ulang semua jadwal interview yang bentrok */
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false)
   const closeDetail = useCallback(() => setSelectedId(null), [])
 
   /** Tambah lamaran baru (id, timestamp, log pertama dibuat otomatis). */
@@ -101,6 +94,32 @@ function App() {
       }))
     },
     [updateApplication],
+  )
+
+  /** Simpan beberapa jadwal interview sekaligus (immutable) + catat di activity log */
+  const rescheduleInterviews = useCallback(
+    (changes: Record<string, string>) => {
+      const timestamp = new Date().toISOString()
+      setApplications((prev) =>
+        prev.map((app) => {
+          const next = changes[app.id]
+          if (!next || next === app.interviewDateTime) return app
+          return {
+            ...app,
+            interviewDateTime: next,
+            lastUpdatedAt: timestamp,
+            activityLogs: [
+              ...app.activityLogs,
+              createActivityLog(
+                `Jadwal interview diubah: ${formatDateTime(app.interviewDateTime)} → ${formatDateTime(next)}`,
+                timestamp,
+              ),
+            ],
+          }
+        }),
+      )
+    },
+    [setApplications],
   )
 
   // Derived: bentrok dicek dari SELURUH lamaran, tidak terpengaruh filter
@@ -168,7 +187,7 @@ function App() {
       />
 
       <main className="app-main">
-        <ConflictBanner conflicts={conflicts} onReschedule={openReschedule} />
+        <ConflictBanner conflicts={conflicts} onResolve={() => setIsRescheduleOpen(true)} />
 
         {activeTab === 'explore' && (
           <>
@@ -205,7 +224,7 @@ function App() {
               searchRef={searchRef}
               applications={applications}
               skills={kaptenSkills}
-              onOpen={openDetail}
+              onOpen={setSelectedId}
               onSimulate={simulateGhosting}
               onDelete={deleteApplication}
             />
@@ -226,10 +245,18 @@ function App() {
       {selectedApp && (
         <ApplicationDetailModal
           key={selectedApp.id}
-          focusSchedule={focusSchedule}
           application={selectedApp}
           onClose={closeDetail}
           onUpdate={(updater) => updateApplication(selectedApp.id, updater)}
+        />
+      )}
+
+      {isRescheduleOpen && conflicts.length > 0 && (
+        <RescheduleDialog
+          applications={applications}
+          conflicts={conflicts}
+          onClose={() => setIsRescheduleOpen(false)}
+          onSave={rescheduleInterviews}
         />
       )}
 
