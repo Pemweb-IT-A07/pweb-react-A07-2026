@@ -4,6 +4,8 @@ Aplikasi React untuk membantu Kapten mengelola proses lamaran magang: eksplorasi
 
 Praktikum Pemrograman Web Modul 5 — Kelompok A07.
 
+**Demo:** https://pemweb-it-a07.github.io/pweb-react-A07-2026/
+
 ## Tech stack
 
 - React 19 + TypeScript (`strict: true`, tanpa `any`)
@@ -20,6 +22,10 @@ npx tsc --noEmit   # cek tipe
 npm run build      # build produksi
 npm run lint       # oxlint
 ```
+
+## Deploy
+
+Setiap push ke `main` otomatis di-build dan di-deploy ke GitHub Pages lewat `.github/workflows/deploy-pages.yml` (type check → lint → build → deploy). Base path diambil dari `actions/configure-pages` dan diteruskan ke Vite lewat env `BASE_PATH`. Deploy manual: tab **Actions → Deploy to GitHub Pages → Run workflow**.
 
 ## Struktur folder
 
