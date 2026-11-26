@@ -1,15 +1,16 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import type { Application, JobListing, NewApplicationInput } from './types'
 import { inferWorkMode } from './services/jobService'
-import { createApplication } from './utils'
+import { createActivityLog, createApplication, DAY_MS, findInterviewConflicts } from './utils'
 import { Navbar } from './components/Navbar'
 import type { TabKey } from './components/Navbar'
-import { StatusBadge } from './components/StatusBadge'
 import { ApplicationDetailModal } from './components/ApplicationDetailModal'
 import { SkillProfile } from './components/SkillProfile'
 import { JobExplorer } from './components/JobExplorer'
 import { ApplicationForm } from './components/ApplicationForm'
+import { PipelineView } from './components/PipelineView'
+import { ConflictBanner } from './components/ConflictBanner'
 
 const DEFAULT_SKILLS = ['React', 'TypeScript', 'CSS']
 
@@ -61,6 +62,21 @@ function App() {
     [addApplication],
   )
 
+  /** Mundurkan lastUpdatedAt 15 hari (untuk demo badge Rawan Ghosting). */
+  const simulateGhosting = useCallback(
+    (id: string) => {
+      updateApplication(id, (app) => ({
+        ...app,
+        lastUpdatedAt: new Date(new Date(app.lastUpdatedAt).getTime() - 15 * DAY_MS).toISOString(),
+        activityLogs: [...app.activityLogs, createActivityLog('Simulasi: lastUpdatedAt dimundurkan 15 hari')],
+      }))
+    },
+    [updateApplication],
+  )
+
+  // Derived: bentrok dicek dari SELURUH lamaran, tidak terpengaruh filter
+  const conflicts = useMemo(() => findInterviewConflicts(applications), [applications])
+
   const deleteApplication = useCallback(
     (id: string): Application | undefined => {
       const removed = applications.find((app) => app.id === id)
@@ -75,6 +91,8 @@ function App() {
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} applicationCount={applications.length} />
 
       <main className="app-main">
+        <ConflictBanner conflicts={conflicts} />
+
         {activeTab === 'explore' && (
           <>
             <section className="section-header">
@@ -91,40 +109,13 @@ function App() {
               <h1>War Room Pipeline</h1>
             </section>
             <ApplicationForm applications={applications} onSubmit={addApplication} />
-            {applications.length === 0 ? (
-              <p className="empty">Belum ada lamaran.</p>
-            ) : (
-              applications.map((app) => (
-                <article key={app.id} className="card section-header">
-                  <div>
-                    <h3>{app.company}</h3>
-                    <p className="muted">{app.role}</p>
-                  </div>
-                  <StatusBadge status={app.status} />
-                  <div>
-                    <button type="button" className="btn btn--sm" onClick={() => setSelectedId(app.id)}>
-                      Detail
-                    </button>{' '}
-                    <button
-                      type="button"
-                      className="btn btn--sm"
-                      onClick={() =>
-                        updateApplication(app.id, (a) => ({ ...a, lastUpdatedAt: new Date().toISOString() }))
-                      }
-                    >
-                      Sentuh
-                    </button>{' '}
-                    <button
-                      type="button"
-                      className="btn btn--sm btn--danger"
-                      onClick={() => deleteApplication(app.id)}
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                </article>
-              ))
-            )}
+            <PipelineView
+              applications={applications}
+              skills={kaptenSkills}
+              onOpen={setSelectedId}
+              onSimulate={simulateGhosting}
+              onDelete={deleteApplication}
+            />
           </>
         )}
 
