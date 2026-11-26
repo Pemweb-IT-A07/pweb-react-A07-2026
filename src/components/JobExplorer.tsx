@@ -114,13 +114,20 @@ export function JobExplorer({ searchRef, skills, applications, onSaveJob }: JobE
         </div>
       </div>
 
-      <p className="muted explorer__summary">
-        {status === 'success' &&
-          `${visibleJobs.length} dari ${jobs.length} lowongan · sumber: ${
-            source === 'remote' ? 'Remotive API' : 'magang-fallback.json'
-          }`}
-        {keyword !== debouncedKeyword && ' · mencari…'}
-      </p>
+      <div className="explorer__bar">
+        <p className="muted explorer__summary">
+          {status === 'success' &&
+            `${visibleJobs.length} dari ${jobs.length} lowongan · sumber: ${
+              source === 'remote' ? 'Remotive API' : 'magang-fallback.json'
+            }`}
+          {keyword !== debouncedKeyword && ' · mencari…'}
+        </p>
+        {status === 'success' && (
+          <button type="button" className="btn btn--sm" onClick={retry}>
+            ↻ Muat Ulang
+          </button>
+        )}
+      </div>
 
       {status === 'loading' && (
         <div className="state state--loading" role="status">
