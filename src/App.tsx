@@ -12,6 +12,8 @@ import { ApplicationForm } from './components/ApplicationForm'
 import { PipelineView } from './components/PipelineView'
 import { ConflictBanner } from './components/ConflictBanner'
 import { Toast } from './components/Toast'
+import { StatsCards } from './components/StatsCards'
+import { OfferComparator } from './components/OfferComparator'
 
 const DEFAULT_SKILLS = ['React', 'TypeScript', 'CSS']
 const UNDO_DURATION_MS = 5000
@@ -157,6 +159,7 @@ function App() {
             <section className="section-header">
               <h1>War Room Pipeline</h1>
             </section>
+            <StatsCards applications={applications} />
             <ApplicationForm applications={applications} onSubmit={addApplication} />
             <PipelineView
               applications={applications}
@@ -169,9 +172,13 @@ function App() {
         )}
 
         {activeTab === 'offer' && (
-          <section className="section-header">
-            <h1>Bandingkan Offer</h1>
-          </section>
+          <>
+            <section className="section-header">
+              <h1>Dashboard & Bandingkan Offer</h1>
+            </section>
+            <StatsCards applications={applications} />
+            <OfferComparator applications={applications} skills={kaptenSkills} />
+          </>
         )}
       </main>
 
